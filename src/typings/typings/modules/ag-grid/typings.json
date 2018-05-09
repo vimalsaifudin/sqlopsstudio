@@ -1,0 +1,11 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "D:\\code\\sqlopsstudio\\node_modules\\ag-grid\\package.json",
+    "raw": "npm:ag-grid",
+    "main": "./main.js",
+    "typings": "./main.d.ts",
+    "version": "17.1.1",
+    "name": "ag-grid"
+  }
+}

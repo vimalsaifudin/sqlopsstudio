@@ -663,11 +663,11 @@ declare module 'sqlops' {
 
 	export interface IDbColumn {
 		allowDBNull?: boolean;
-		baseCatalogName: string;
-		baseColumnName: string;
-		baseSchemaName: string;
-		baseServerName: string;
-		baseTableName: string;
+		baseCatalogName?: string;
+		baseColumnName?: string;
+		baseSchemaName?: string;
+		baseServerName?: string;
+		baseTableName?: string;
 		columnName: string;
 		columnOrdinal?: number;
 		columnSize?: number;
@@ -681,7 +681,7 @@ declare module 'sqlops' {
 		isChars?: boolean;
 		isSqlVariant?: boolean;
 		isUdt?: boolean;
-		dataType: string;
+		dataType?: string;
 		isXml?: boolean;
 		isJson?: boolean;
 		isLong?: boolean;
@@ -689,8 +689,8 @@ declare module 'sqlops' {
 		isUnique?: boolean;
 		numericPrecision?: number;
 		numericScale?: number;
-		udtAssemblyQualifiedName: string;
-		dataTypeName: string;
+		udtAssemblyQualifiedName?: string;
+		dataTypeName?: string;
 	}
 
 	export interface IGridResultSet {

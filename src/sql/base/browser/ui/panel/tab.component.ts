@@ -30,7 +30,7 @@ export class TabComponent implements OnDestroy {
 
 	public set active(val: boolean) {
 		this._active = val;
-		if (this.active && this._child) {
+		if (this.active && this._child && this._child.layout) {
 			this._child.layout();
 		}
 	}

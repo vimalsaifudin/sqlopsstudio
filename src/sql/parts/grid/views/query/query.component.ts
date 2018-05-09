@@ -15,7 +15,7 @@ import {
 	ElementRef, QueryList, ChangeDetectorRef, OnInit, OnDestroy, Component, Inject,
 	ViewChildren, forwardRef, EventEmitter, Input, ViewChild
 } from '@angular/core';
-import { IGridDataRow, SlickGrid, VirtualizedCollection } from 'angular2-slickgrid';
+import { ColDef, IGetRowsParams } from 'ag-grid';
 
 import * as LocalizedConstants from 'sql/parts/query/common/localizedConstants';
 import * as Services from 'sql/parts/grid/services/sharedServices';
@@ -27,6 +27,8 @@ import { QueryComponentParams } from 'sql/services/bootstrap/bootstrapParams';
 import { error } from 'sql/base/common/log';
 import { TabChild } from 'sql/base/browser/ui/panel/tab.component';
 import { clone } from 'sql/base/common/objects';
+
+import * as sqlops from 'sqlops';
 
 import * as strings from 'vs/base/common/strings';
 import * as DOM from 'vs/base/browser/dom';
@@ -58,61 +60,61 @@ export class QueryComponent extends GridParentComponent implements OnInit, OnDes
 
 	// tslint:disable-next-line:no-unused-variable
 	private dataIcons: IGridIcon[] = [
-		{
-			showCondition: () => { return this.dataSets.length > 1; },
-			icon: () => {
-				return this.renderedDataSets.length === 1
-					? 'exitFullScreen'
-					: 'extendFullScreen';
-			},
-			hoverText: () => {
-				return this.renderedDataSets.length === 1
-					? LocalizedConstants.restoreLabel
-					: LocalizedConstants.maximizeLabel;
-			},
-			functionality: (batchId, resultId, index) => {
-				this.magnify(index);
-			}
-		},
-		{
-			showCondition: () => { return true; },
-			icon: () => { return 'saveCsv'; },
-			hoverText: () => { return LocalizedConstants.saveCSVLabel; },
-			functionality: (batchId, resultId, index) => {
-				let selection = this.slickgrids.toArray()[index].getSelectedRanges();
-				if (selection.length <= 1) {
-					this.handleContextClick({ type: 'savecsv', batchId: batchId, resultId: resultId, index: index, selection: selection });
-				} else {
-					this.dataService.showWarning(LocalizedConstants.msgCannotSaveMultipleSelections);
-				}
-			}
-		},
-		{
-			showCondition: () => { return true; },
-			icon: () => { return 'saveJson'; },
-			hoverText: () => { return LocalizedConstants.saveJSONLabel; },
-			functionality: (batchId, resultId, index) => {
-				let selection = this.slickgrids.toArray()[index].getSelectedRanges();
-				if (selection.length <= 1) {
-					this.handleContextClick({ type: 'savejson', batchId: batchId, resultId: resultId, index: index, selection: selection });
-				} else {
-					this.dataService.showWarning(LocalizedConstants.msgCannotSaveMultipleSelections);
-				}
-			}
-		},
-		{
-			showCondition: () => { return true; },
-			icon: () => { return 'saveExcel'; },
-			hoverText: () => { return LocalizedConstants.saveExcelLabel; },
-			functionality: (batchId, resultId, index) => {
-				let selection = this.slickgrids.toArray()[index].getSelectedRanges();
-				if (selection.length <= 1) {
-					this.handleContextClick({ type: 'saveexcel', batchId: batchId, resultId: resultId, index: index, selection: selection });
-				} else {
-					this.dataService.showWarning(LocalizedConstants.msgCannotSaveMultipleSelections);
-				}
-			}
-		},
+		// {
+		// 	showCondition: () => { return this.dataSets.length > 1; },
+		// 	icon: () => {
+		// 		return this.renderedDataSets.length === 1
+		// 			? 'exitFullScreen'
+		// 			: 'extendFullScreen';
+		// 	},
+		// 	hoverText: () => {
+		// 		return this.renderedDataSets.length === 1
+		// 			? LocalizedConstants.restoreLabel
+		// 			: LocalizedConstants.maximizeLabel;
+		// 	},
+		// 	functionality: (batchId, resultId, index) => {
+		// 		this.magnify(index);
+		// 	}
+		// },
+		// {
+		// 	showCondition: () => { return true; },
+		// 	icon: () => { return 'saveCsv'; },
+		// 	hoverText: () => { return LocalizedConstants.saveCSVLabel; },
+		// 	functionality: (batchId, resultId, index) => {
+		// 		let selection = this.slickgrids.toArray()[index].getSelectedRanges();
+		// 		if (selection.length <= 1) {
+		// 			this.handleContextClick({ type: 'savecsv', batchId: batchId, resultId: resultId, index: index, selection: selection });
+		// 		} else {
+		// 			this.dataService.showWarning(LocalizedConstants.msgCannotSaveMultipleSelections);
+		// 		}
+		// 	}
+		// },
+		// {
+		// 	showCondition: () => { return true; },
+		// 	icon: () => { return 'saveJson'; },
+		// 	hoverText: () => { return LocalizedConstants.saveJSONLabel; },
+		// 	functionality: (batchId, resultId, index) => {
+		// 		let selection = this.slickgrids.toArray()[index].getSelectedRanges();
+		// 		if (selection.length <= 1) {
+		// 			this.handleContextClick({ type: 'savejson', batchId: batchId, resultId: resultId, index: index, selection: selection });
+		// 		} else {
+		// 			this.dataService.showWarning(LocalizedConstants.msgCannotSaveMultipleSelections);
+		// 		}
+		// 	}
+		// },
+		// {
+		// 	showCondition: () => { return true; },
+		// 	icon: () => { return 'saveExcel'; },
+		// 	hoverText: () => { return LocalizedConstants.saveExcelLabel; },
+		// 	functionality: (batchId, resultId, index) => {
+		// 		let selection = this.slickgrids.toArray()[index].getSelectedRanges();
+		// 		if (selection.length <= 1) {
+		// 			this.handleContextClick({ type: 'saveexcel', batchId: batchId, resultId: resultId, index: index, selection: selection });
+		// 		} else {
+		// 			this.dataService.showWarning(LocalizedConstants.msgCannotSaveMultipleSelections);
+		// 		}
+		// 	}
+		// },
 		{
 			showCondition: () => { return true; },
 			icon: () => { return 'viewChart'; },
@@ -151,7 +153,7 @@ export class QueryComponent extends GridParentComponent implements OnInit, OnDes
 
 	@Input() public queryParameters: QueryComponentParams;
 
-	@ViewChildren('slickgrid') slickgrids: QueryList<SlickGrid>;
+	// @ViewChildren('slickgrid') slickgrids: QueryList<SlickGrid>;
 	// tslint:disable-next-line:no-unused-variable
 	@ViewChild('resultsPane', { read: ElementRef }) private _resultsPane: ElementRef;
 	@ViewChild('queryLink', { read: ElementRef }) private _queryLinkElement: ElementRef;
@@ -167,10 +169,10 @@ export class QueryComponent extends GridParentComponent implements OnInit, OnDes
 		bootstrapService.configurationService.onDidChangeConfiguration(e => {
 			if (e.affectsConfiguration('resultsGrid')) {
 				this.rowHeight = bootstrapService.configurationService.getValue<any>('resultsGrid').rowHeight;
-				this.slickgrids.forEach(i => {
-					i.rowHeight = this.rowHeight;
-				});
-				this.resizeGrids();
+				// this.slickgrids.forEach(i => {
+				// 	i.rowHeight = this.rowHeight;
+				// });
+				// this.resizeGrids();
 			}
 		});
 	}
@@ -182,7 +184,7 @@ export class QueryComponent extends GridParentComponent implements OnInit, OnDes
 		const self = this;
 
 		this.dataService = this.queryParameters.dataService;
-		this.actionProvider = this._bootstrapService.instantiationService.createInstance(GridActionProvider, this.dataService, this.onGridSelectAll());
+		// this.actionProvider = this._bootstrapService.instantiationService.createInstance(GridActionProvider, this.dataService, this.onGridSelectAll());
 
 		this.baseInit();
 		this.setupResizeBind();
@@ -221,9 +223,9 @@ export class QueryComponent extends GridParentComponent implements OnInit, OnDes
 		shortcuts['event.prevGrid'] = () => {
 			this.navigateToGrid(this.activeGrid - 1);
 		};
-		shortcuts['event.maximizeGrid'] = () => {
-			this.magnify(this.activeGrid);
-		};
+		// shortcuts['event.maximizeGrid'] = () => {
+		// 	this.magnify(this.activeGrid);
+		// };
 	}
 
 	handleStart(self: QueryComponent, event: any): void {
@@ -274,34 +276,13 @@ export class QueryComponent extends GridParentComponent implements OnInit, OnDes
 	}
 
 	handleResultSet(self: QueryComponent, event: any): void {
-		let resultSet = event.data;
+		let resultSet: sqlops.ResultSetSummary = event.data;
 
 		// No column info found, so define a column of no name by default
 		if (!resultSet.columnInfo) {
 			resultSet.columnInfo = [];
 			resultSet.columnInfo[0] = { columnName: '' };
 		}
-		// Setup a function for generating a promise to lookup result subsets
-		let loadDataFunction = (offset: number, count: number): Promise<IGridDataRow[]> => {
-			return new Promise<IGridDataRow[]>((resolve, reject) => {
-				self.dataService.getQueryRows(offset, count, resultSet.batchId, resultSet.id).subscribe(rows => {
-					let gridData: IGridDataRow[] = [];
-					for (let row = 0; row < rows.rows.length; row++) {
-						// Push row values onto end of gridData for slickgrid
-						gridData.push({
-							values: rows.rows[row]
-						});
-					}
-
-					// if this is a query plan resultset we haven't processed yet then forward to subscribers
-					if (self.hasQueryPlan && resultSet.id === self.queryPlanResultSetId && !self.sentPlans[resultSet.id]) {
-						self.sentPlans[resultSet.id] = rows.rows[0][0].displayValue;
-						self.queryPlanAvailable.emit(rows.rows[0][0].displayValue);
-					}
-					resolve(gridData);
-				});
-			});
-		};
 
 		// Precalculate the max height and min height
 		let maxHeight: string = 'inherit';
@@ -318,33 +299,55 @@ export class QueryComponent extends GridParentComponent implements OnInit, OnDes
 
 		// Store the result set from the event
 		let dataSet: IGridDataSet = {
-			resized: undefined,
-			batchId: resultSet.batchId,
-			resultId: resultSet.id,
-			totalRows: resultSet.rowCount,
-			maxHeight: maxHeight,
-			minHeight: minHeight,
-			dataRows: new VirtualizedCollection(
-				self.windowSize,
-				resultSet.rowCount,
-				loadDataFunction,
-				index => { return { values: [] }; }
-			),
-			columnDefinitions: resultSet.columnInfo.map((c, i) => {
-				let isLinked = c.isXml || c.isJson;
-				let linkType = c.isXml ? 'xml' : 'json';
+			// resized: undefined,
+			// batchId: resultSet.batchId,
+			// resultId: resultSet.id,
+			// totalRows: resultSet.rowCount,
+			// maxHeight: maxHeight,
+			// minHeight: minHeight,
+			gridOptions: {
+				onGridReady: () => {
+					dataSet.gridOptions.api.setDatasource({
+						rowCount: resultSet.rowCount,
+						getRows: (params: IGetRowsParams): void => {
+							self.dataService.getQueryRows(params.startRow, params.endRow - params.startRow, resultSet.batchId, resultSet.id).subscribe(rows => {
+								params.successCallback(rows.rows.map(r => {
+									return resultSet.columnInfo.reduce((p, c, i) => {
+										p[c.columnName] = r[i].displayValue;
+										return p;
+									}, {});
+								}));
+							});
+						}
+					});
+				},
+				debug: true,
+				// how big each page in our page cache will be, default is 100
+				paginationPageSize: 100,
+				// how many extra blank rows to display to the user at the end of the dataset,
+				// which sets the vertical scroll and then allows the grid to request viewing more rows of data.
+				// default is 1, ie show 1 row.
+				cacheOverflowSize: 2,
+				// how many server side requests to send at a time. if user is scrolling lots, then the requests
+				// are throttled down
+				maxConcurrentDatasourceRequests: 2,
+				// how many rows to initially show in the grid. having 1 shows a blank row, so it looks like
+				// the grid is loading from the users perspective (as we have a spinner in the first col)
+				infiniteInitialRowCount: 1,
+				// how many pages to store in cache. default is undefined, which allows an infinite sized cache,
+				// pages are never purged. this should be set for large data to stop your browser from getting
+				// full of data
+				maxBlocksInCache: 2,
+				rowBuffer: 0
+			},
+			columnDefinitions: resultSet.columnInfo.map((c, i): ColDef => {
 				return {
-					id: i.toString(),
-					name: c.columnName === 'Microsoft SQL Server 2005 XML Showplan'
-						? 'XML Showplan'
-						: c.columnName,
-					type: self.stringToFieldType('string'),
-					formatter: isLinked ? Services.hyperLinkFormatter : Services.textFormatter,
-					asyncPostRender: isLinked ? self.linkHandler(linkType) : undefined
+					headerName: c.columnName,
+					field: c.columnName
 				};
 			})
 		};
-		self.dataSets.push(dataSet);
+		self.renderedDataSets.push(dataSet);
 
 		// check if the resultset is for a query plan
 		for (let i = 0; i < resultSet.columnInfo.length; ++i) {
@@ -357,12 +360,12 @@ export class QueryComponent extends GridParentComponent implements OnInit, OnDes
 		}
 
 		// Create a dataSet to render without rows to reduce DOM size
-		let undefinedDataSet = clone(dataSet);
-		undefinedDataSet.columnDefinitions = dataSet.columnDefinitions;
-		undefinedDataSet.dataRows = undefined;
-		undefinedDataSet.resized = new EventEmitter();
-		self.placeHolderDataSets.push(undefinedDataSet);
-		self.onScroll(0);
+		// let undefinedDataSet = clone(dataSet);
+		// undefinedDataSet.columnDefinitions = dataSet.columnDefinitions;
+		// undefinedDataSet.dataRows = undefined;
+		// undefinedDataSet.resized = new EventEmitter();
+		// self.placeHolderDataSets.push(undefinedDataSet);
+		// self.onScroll(0);
 	}
 
 	openMessagesContextMenu(event: any): void {
@@ -387,38 +390,38 @@ export class QueryComponent extends GridParentComponent implements OnInit, OnDes
 	 * and destroying any results that have moved out of view
 	 * @param scrollTop The scrolltop value, if not called by the scroll event should be 0
 	 */
-	onScroll(scrollTop): void {
-		const self = this;
-		clearTimeout(self.scrollTimeOut);
-		this.scrollTimeOut = setTimeout(() => {
-			if (self.dataSets.length < self.maxScrollGrids) {
-				self.scrollEnabled = false;
-				for (let i = 0; i < self.placeHolderDataSets.length; i++) {
-					self.placeHolderDataSets[i].dataRows = self.dataSets[i].dataRows;
-					self.placeHolderDataSets[i].resized.emit();
-				}
-			} else {
-				let gridHeight = self._el.nativeElement.getElementsByTagName('slick-grid')[0].offsetHeight;
-				let tabHeight = self.getResultsElement().offsetHeight;
-				let numOfVisibleGrids = Math.ceil((tabHeight / gridHeight)
-					+ ((scrollTop % gridHeight) / gridHeight));
-				let min = Math.floor(scrollTop / gridHeight);
-				let max = min + numOfVisibleGrids;
-				for (let i = 0; i < self.placeHolderDataSets.length; i++) {
-					if (i >= min && i < max) {
-						if (self.placeHolderDataSets[i].dataRows === undefined) {
-							self.placeHolderDataSets[i].dataRows = self.dataSets[i].dataRows;
-							self.placeHolderDataSets[i].resized.emit();
-						}
-					} else if (self.placeHolderDataSets[i].dataRows !== undefined) {
-						self.placeHolderDataSets[i].dataRows = undefined;
-					}
-				}
-			}
+	// onScroll(scrollTop): void {
+	// 	const self = this;
+	// 	clearTimeout(self.scrollTimeOut);
+	// 	this.scrollTimeOut = setTimeout(() => {
+	// 		if (self.dataSets.length < self.maxScrollGrids) {
+	// 			self.scrollEnabled = false;
+	// 			for (let i = 0; i < self.placeHolderDataSets.length; i++) {
+	// 				self.placeHolderDataSets[i].dataRows = self.dataSets[i].dataRows;
+	// 				self.placeHolderDataSets[i].resized.emit();
+	// 			}
+	// 		} else {
+	// 			let gridHeight = self._el.nativeElement.getElementsByTagName('slick-grid')[0].offsetHeight;
+	// 			let tabHeight = self.getResultsElement().offsetHeight;
+	// 			let numOfVisibleGrids = Math.ceil((tabHeight / gridHeight)
+	// 				+ ((scrollTop % gridHeight) / gridHeight));
+	// 			let min = Math.floor(scrollTop / gridHeight);
+	// 			let max = min + numOfVisibleGrids;
+	// 			for (let i = 0; i < self.placeHolderDataSets.length; i++) {
+	// 				if (i >= min && i < max) {
+	// 					if (self.placeHolderDataSets[i].dataRows === undefined) {
+	// 						self.placeHolderDataSets[i].dataRows = self.dataSets[i].dataRows;
+	// 						self.placeHolderDataSets[i].resized.emit();
+	// 					}
+	// 				} else if (self.placeHolderDataSets[i].dataRows !== undefined) {
+	// 					self.placeHolderDataSets[i].dataRows = undefined;
+	// 				}
+	// 			}
+	// 		}
 
-			self._cd.detectChanges();
-		}, self.scrollTimeOutTime);
-	}
+	// 		self._cd.detectChanges();
+	// 	}, self.scrollTimeOutTime);
+	// }
 
 	onSelectionLinkClicked(index: number): void {
 		this.dataService.setEditorSelection(index);
@@ -473,7 +476,7 @@ export class QueryComponent extends GridParentComponent implements OnInit, OnDes
 				let minHeightNumber = this.getMessagePaneHeightFromDrag(e.pageY);
 				$messages.css('min-height', minHeightNumber + 'px');
 				self._cd.detectChanges();
-				self.resizeGrids();
+				// self.resizeGrids();
 
 				// Otherwise just update the UI to show that the drag is complete
 			} else {
@@ -555,8 +558,8 @@ export class QueryComponent extends GridParentComponent implements OnInit, OnDes
 			return false;
 		}
 
-		this.slickgrids.toArray()[this.activeGrid].selection = false;
-		this.slickgrids.toArray()[targetIndex].setActive();
+		// this.slickgrids.toArray()[this.activeGrid].selection = false;
+		// this.slickgrids.toArray()[targetIndex].setActive();
 		this.activeGrid = targetIndex;
 
 		// scrolling logic
@@ -580,14 +583,14 @@ export class QueryComponent extends GridParentComponent implements OnInit, OnDes
 		return DOM.isAncestor(document.activeElement, this._el.nativeElement);
 	}
 
-	resizeGrids(): void {
-		const self = this;
-		setTimeout(() => {
-			for (let grid of self.renderedDataSets) {
-				grid.resized.emit();
-			}
-		});
-	}
+	// resizeGrids(): void {
+	// 	const self = this;
+	// 	setTimeout(() => {
+	// 		for (let grid of self.renderedDataSets) {
+	// 			grid.resized.emit();
+	// 		}
+	// 	});
+	// }
 
 	private showChartForGrid(index: number) {
 		if (this.renderedDataSets.length > index) {
@@ -602,32 +605,32 @@ export class QueryComponent extends GridParentComponent implements OnInit, OnDes
 	protected toggleResultPane(): void {
 		this.resultActive = !this.resultActive;
 		this._cd.detectChanges();
-		if (this.resultActive) {
-			this.resizeGrids();
-			this.slickgrids.toArray()[this.activeGrid].setActive();
-		}
+		// if (this.resultActive) {
+		// 	this.resizeGrids();
+		// 	this.slickgrids.toArray()[this.activeGrid].setActive();
+		// }
 	}
 
-	protected toggleMessagePane(): void {
-		this.messageActive = !this.messageActive;
-		this._cd.detectChanges();
-		if (this.messageActive && this._messagesContainer) {
-			let header = <HTMLElement>this._messagesContainer.nativeElement;
-			header.focus();
-		}
-	}
+	// protected toggleMessagePane(): void {
+	// 	this.messageActive = !this.messageActive;
+	// 	this._cd.detectChanges();
+	// 	if (this.messageActive && this._messagesContainer) {
+	// 		let header = <HTMLElement>this._messagesContainer.nativeElement;
+	// 		header.focus();
+	// 	}
+	// }
 
 	/* Helper function to toggle messages and results panes */
 	// tslint:disable-next-line:no-unused-variable
-	private togglePane(pane: PaneType): void {
-		if (pane === 'messages') {
-			this.toggleMessagePane();
-		} else if (pane === 'results') {
-			this.toggleResultPane();
-		}
-	}
+	// private togglePane(pane: PaneType): void {
+	// 	if (pane === 'messages') {
+	// 		this.toggleMessagePane();
+	// 	} else if (pane === 'results') {
+	// 		this.toggleResultPane();
+	// 	}
+	// }
 
-	layout() {
-		this.resizeGrids();
-	}
+	// layout() {
+	// 	this.resizeGrids();
+	// }
 }

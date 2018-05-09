@@ -54,12 +54,6 @@
     flex-flow: row;
 }
 
-.horzBox .boxCol.content {
-    flex: 1 1 1%;
-    overflow: auto;
-    max-width: fit-content;
-}
-
 .hidden {
     display: none !important;
 }

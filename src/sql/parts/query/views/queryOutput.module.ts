@@ -8,7 +8,7 @@ import { ApplicationRef, ComponentFactoryResolver, forwardRef, NgModule, Inject 
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { SlickGrid } from 'angular2-slickgrid';
+import { AgGridModule } from 'ag-grid-angular';
 import { ChartsModule } from 'ng2-charts/ng2-charts';
 
 const BrowserAnimationsModule = (<any>require.__$__nodeRequire('@angular/platform-browser/animations')).BrowserAnimationsModule;
@@ -48,12 +48,12 @@ let insightComponents = Registry.as<IInsightRegistry>(Extensions.InsightContribu
 		FormsModule,
 		BrowserAnimationsModule,
 		ChartsModule,
-		PanelModule
+		PanelModule,
+		AgGridModule.withComponents([])
 	],
 	declarations: [
 		...baseComponents,
 		...insightComponents,
-		SlickGrid,
 		ScrollDirective,
 		MouseDownDirective,
 		Checkbox,

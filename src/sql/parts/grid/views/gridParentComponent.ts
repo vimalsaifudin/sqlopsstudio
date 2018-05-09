@@ -13,7 +13,6 @@ import 'vs/css!sql/parts/grid/media/slickGrid';
 
 import { Subscription, Subject } from 'rxjs/Rx';
 import { ElementRef, QueryList, ChangeDetectorRef, ViewChildren } from '@angular/core';
-import { IGridDataRow, ISlickRange, SlickGrid, FieldType } from 'angular2-slickgrid';
 import { toDisposableSubscription } from 'sql/parts/common/rxjsUtils';
 import * as Constants from 'sql/parts/query/common/constants';
 import * as LocalizedConstants from 'sql/parts/query/common/localizedConstants';
@@ -85,7 +84,7 @@ export abstract class GridParentComponent {
 	protected _messageActive = true;
 	protected activeGrid = 0;
 
-	@ViewChildren('slickgrid') slickgrids: QueryList<SlickGrid>;
+	// @ViewChildren('slickgrid') slickgrids: QueryList<SlickGrid>;
 
 	// Edit Data functions
 	public onActiveCellChanged: (event: { row: number, column: number }) => void;
@@ -96,15 +95,15 @@ export abstract class GridParentComponent {
 	public onIsCellEditValid: (row: number, column: number, newValue: any) => boolean;
 	public onIsColumnEditable: (column: number) => boolean;
 	public overrideCellFn: (rowNumber, columnId, value?, data?) => string;
-	public loadDataFunction: (offset: number, count: number) => Promise<IGridDataRow[]>;
+	// public loadDataFunction: (offset: number, count: number) => Promise<IGridDataRow[]>;
 
-	set messageActive(input: boolean) {
-		this._messageActive = input;
-		if (this.resultActive) {
-			this.resizeGrids();
-		}
-		this._cd.detectChanges();
-	}
+	// set messageActive(input: boolean) {
+	// 	this._messageActive = input;
+	// 	if (this.resultActive) {
+	// 		this.resizeGrids();
+	// 	}
+	// 	this._cd.detectChanges();
+	// }
 
 	get messageActive(): boolean {
 		return this._messageActive;
@@ -132,39 +131,39 @@ export abstract class GridParentComponent {
 				case GridContentEvents.RefreshContents:
 					self.refreshResultsets();
 					break;
-				case GridContentEvents.ResizeContents:
-					self.resizeGrids();
-					break;
-				case GridContentEvents.CopySelection:
-					self.copySelection();
-					break;
-				case GridContentEvents.CopyWithHeaders:
-					self.copyWithHeaders();
-					break;
+				// case GridContentEvents.ResizeContents:
+				// 	self.resizeGrids();
+				// 	break;
+				// case GridContentEvents.CopySelection:
+				// 	self.copySelection();
+				// 	break;
+				// case GridContentEvents.CopyWithHeaders:
+				// 	self.copyWithHeaders();
+				// 	break;
 				case GridContentEvents.CopyMessagesSelection:
 					self.copyMessagesSelection();
 					break;
-				case GridContentEvents.ToggleResultPane:
-					self.toggleResultPane();
-					break;
-				case GridContentEvents.ToggleMessagePane:
-					self.toggleMessagePane();
-					break;
-				case GridContentEvents.SelectAll:
-					self.onSelectAllForActiveGrid();
-					break;
+				// case GridContentEvents.ToggleResultPane:
+				// 	self.toggleResultPane();
+				// 	break;
+				// case GridContentEvents.ToggleMessagePane:
+				// 	self.toggleMessagePane();
+				// 	break;
+				// case GridContentEvents.SelectAll:
+				// 	self.onSelectAllForActiveGrid();
+				// 	break;
 				case GridContentEvents.SelectAllMessages:
 					self.selectAllMessages();
 					break;
-				case GridContentEvents.SaveAsCsv:
-					self.sendSaveRequest(SaveFormat.CSV);
-					break;
-				case GridContentEvents.SaveAsJSON:
-					self.sendSaveRequest(SaveFormat.JSON);
-					break;
-				case GridContentEvents.SaveAsExcel:
-					self.sendSaveRequest(SaveFormat.EXCEL);
-					break;
+				// case GridContentEvents.SaveAsCsv:
+				// 	self.sendSaveRequest(SaveFormat.CSV);
+				// 	break;
+				// case GridContentEvents.SaveAsJSON:
+				// 	self.sendSaveRequest(SaveFormat.JSON);
+				// 	break;
+				// case GridContentEvents.SaveAsExcel:
+				// 	self.sendSaveRequest(SaveFormat.EXCEL);
+				// 	break;
 				case GridContentEvents.GoToNextQueryOutputTab:
 					self.goToNextQueryOutputTab();
 					break;
@@ -208,17 +207,17 @@ export abstract class GridParentComponent {
 		this.toDispose = dispose(this.toDispose);
 	}
 
-	protected toggleResultPane(): void {
-		this.resultActive = !this.resultActive;
-		if (this.resultActive) {
-			this.resizeGrids();
-		}
-		this._cd.detectChanges();
-	}
+	// protected toggleResultPane(): void {
+	// 	this.resultActive = !this.resultActive;
+	// 	if (this.resultActive) {
+	// 		this.resizeGrids();
+	// 	}
+	// 	this._cd.detectChanges();
+	// }
 
-	protected toggleMessagePane(): void {
-		this.messageActive = !this.messageActive;
-	}
+	// protected toggleMessagePane(): void {
+	// 	this.messageActive = !this.messageActive;
+	// }
 
 	protected onGridFocus() {
 		this.gridFocussedContextKey.set(true);
@@ -236,23 +235,23 @@ export abstract class GridParentComponent {
 		this.messagesFocussedContextKey.set(false);
 	}
 
-	private copySelection(): void {
-		let messageText = this.getMessageText();
-		if (messageText.length > 0) {
-			this._bootstrapService.clipboardService.writeText(messageText);
-		} else {
-			let activeGrid = this.activeGrid;
-			let selection = this.slickgrids.toArray()[activeGrid].getSelectedRanges();
-			this.dataService.copyResults(selection, this.renderedDataSets[activeGrid].batchId, this.renderedDataSets[activeGrid].resultId);
-		}
-	}
+	// private copySelection(): void {
+	// 	let messageText = this.getMessageText();
+	// 	if (messageText.length > 0) {
+	// 		this._bootstrapService.clipboardService.writeText(messageText);
+	// 	} else {
+	// 		let activeGrid = this.activeGrid;
+	// 		let selection = this.slickgrids.toArray()[activeGrid].getSelectedRanges();
+	// 		this.dataService.copyResults(selection, this.renderedDataSets[activeGrid].batchId, this.renderedDataSets[activeGrid].resultId);
+	// 	}
+	// }
 
-	private copyWithHeaders(): void {
-		let activeGrid = this.activeGrid;
-		let selection = this.slickgrids.toArray()[activeGrid].getSelectedRanges();
-		this.dataService.copyResults(selection, this.renderedDataSets[activeGrid].batchId,
-			this.renderedDataSets[activeGrid].resultId, true);
-	}
+	// private copyWithHeaders(): void {
+	// 	let activeGrid = this.activeGrid;
+	// 	let selection = this.slickgrids.toArray()[activeGrid].getSelectedRanges();
+	// 	this.dataService.copyResults(selection, this.renderedDataSets[activeGrid].batchId,
+	// 		this.renderedDataSets[activeGrid].resultId, true);
+	// }
 
 	private copyMessagesSelection(): void {
 		let messageText = this.getMessageText();
@@ -280,30 +279,30 @@ export abstract class GridParentComponent {
 
 	private initShortcutsBase(): void {
 		let shortcuts = {
-			'ToggleResultPane': () => {
-				this.toggleResultPane();
-			},
-			'ToggleMessagePane': () => {
-				this.toggleMessagePane();
-			},
-			'CopySelection': () => {
-				this.copySelection();
-			},
-			'CopyWithHeaders': () => {
-				this.copyWithHeaders();
-			},
-			'SelectAll': () => {
-				this.onSelectAllForActiveGrid();
-			},
-			'SaveAsCSV': () => {
-				this.sendSaveRequest(SaveFormat.CSV);
-			},
-			'SaveAsJSON': () => {
-				this.sendSaveRequest(SaveFormat.JSON);
-			},
-			'SaveAsExcel': () => {
-				this.sendSaveRequest(SaveFormat.EXCEL);
-			},
+			// 'ToggleResultPane': () => {
+			// 	this.toggleResultPane();
+			// },
+			// 'ToggleMessagePane': () => {
+			// 	this.toggleMessagePane();
+			// },
+			// 'CopySelection': () => {
+			// 	this.copySelection();
+			// },
+			// 'CopyWithHeaders': () => {
+			// 	this.copyWithHeaders();
+			// },
+			// 'SelectAll': () => {
+			// 	this.onSelectAllForActiveGrid();
+			// },
+			// 'SaveAsCSV': () => {
+			// 	this.sendSaveRequest(SaveFormat.CSV);
+			// },
+			// 'SaveAsJSON': () => {
+			// 	this.sendSaveRequest(SaveFormat.JSON);
+			// },
+			// 'SaveAsExcel': () => {
+			// 	this.sendSaveRequest(SaveFormat.EXCEL);
+			// },
 			'GoToNextQueryOutputTab': () => {
 				this.goToNextQueryOutputTab();
 			}
@@ -318,74 +317,74 @@ export abstract class GridParentComponent {
 	/**
 	 * Send save result set request to service
 	 */
-	handleContextClick(event: { type: string, batchId: number, resultId: number, index: number, selection: ISlickRange[] }): void {
-		switch (event.type) {
-			case 'savecsv':
-				this.dataService.sendSaveRequest({ batchIndex: event.batchId, resultSetNumber: event.resultId, format: SaveFormat.CSV, selection: event.selection });
-				break;
-			case 'savejson':
-				this.dataService.sendSaveRequest({ batchIndex: event.batchId, resultSetNumber: event.resultId, format: SaveFormat.JSON, selection: event.selection });
-				break;
-			case 'saveexcel':
-				this.dataService.sendSaveRequest({ batchIndex: event.batchId, resultSetNumber: event.resultId, format: SaveFormat.EXCEL, selection: event.selection });
-				break;
-			case 'selectall':
-				this.activeGrid = event.index;
-				this.onSelectAllForActiveGrid();
-				break;
-			case 'copySelection':
-				this.dataService.copyResults(event.selection, event.batchId, event.resultId);
-				break;
-			case 'copyWithHeaders':
-				this.dataService.copyResults(event.selection, event.batchId, event.resultId, true);
-				break;
-			default:
-				break;
-		}
-	}
+	// handleContextClick(event: { type: string, batchId: number, resultId: number, index: number, selection: ISlickRange[] }): void {
+	// 	switch (event.type) {
+	// 		case 'savecsv':
+	// 			this.dataService.sendSaveRequest({ batchIndex: event.batchId, resultSetNumber: event.resultId, format: SaveFormat.CSV, selection: event.selection });
+	// 			break;
+	// 		case 'savejson':
+	// 			this.dataService.sendSaveRequest({ batchIndex: event.batchId, resultSetNumber: event.resultId, format: SaveFormat.JSON, selection: event.selection });
+	// 			break;
+	// 		case 'saveexcel':
+	// 			this.dataService.sendSaveRequest({ batchIndex: event.batchId, resultSetNumber: event.resultId, format: SaveFormat.EXCEL, selection: event.selection });
+	// 			break;
+	// 		case 'selectall':
+	// 			this.activeGrid = event.index;
+	// 			this.onSelectAllForActiveGrid();
+	// 			break;
+	// 		case 'copySelection':
+	// 			this.dataService.copyResults(event.selection, event.batchId, event.resultId);
+	// 			break;
+	// 		case 'copyWithHeaders':
+	// 			this.dataService.copyResults(event.selection, event.batchId, event.resultId, true);
+	// 			break;
+	// 		default:
+	// 			break;
+	// 	}
+	// }
 
-	private sendSaveRequest(format: SaveFormat) {
-		let activeGrid = this.activeGrid;
-		let batchId = this.renderedDataSets[activeGrid].batchId;
-		let resultId = this.renderedDataSets[activeGrid].resultId;
-		let selection = this.slickgrids.toArray()[activeGrid].getSelectedRanges();
-		this.dataService.sendSaveRequest({ batchIndex: batchId, resultSetNumber: resultId, format: format, selection: selection });
-	}
+	// private sendSaveRequest(format: SaveFormat) {
+	// 	let activeGrid = this.activeGrid;
+	// 	let batchId = this.renderedDataSets[activeGrid].batchId;
+	// 	let resultId = this.renderedDataSets[activeGrid].resultId;
+	// 	let selection = this.slickgrids.toArray()[activeGrid].getSelectedRanges();
+	// 	this.dataService.sendSaveRequest({ batchIndex: batchId, resultSetNumber: resultId, format: format, selection: selection });
+	// }
 
 	protected _keybindingFor(action: IAction): ResolvedKeybinding {
 		var [kb] = this.keybindingService.lookupKeybindings(action.id);
 		return kb;
 	}
 
-	openContextMenu(event, batchId, resultId, index): void {
-		let slick: any = this.slickgrids.toArray()[index];
-		let grid = slick._grid;
+	// openContextMenu(event, batchId, resultId, index): void {
+	// 	let slick: any = this.slickgrids.toArray()[index];
+	// 	let grid = slick._grid;
 
-		let selection = this.slickgrids.toArray()[index].getSelectedRanges();
+	// 	let selection = this.slickgrids.toArray()[index].getSelectedRanges();
 
-		if (selection && selection.length === 0) {
-			let cell = (grid as Slick.Grid<any>).getCellFromEvent(event);
-			selection = [new Slick.Range(cell.row, cell.cell - 1)];
-		}
+	// 	if (selection && selection.length === 0) {
+	// 		let cell = (grid as Slick.Grid<any>).getCellFromEvent(event);
+	// 		selection = [new Slick.Range(cell.row, cell.cell - 1)];
+	// 	}
 
-		let rowIndex = grid.getCellFromEvent(event).row;
+	// 	let rowIndex = grid.getCellFromEvent(event).row;
 
-		let actionContext: IGridInfo = {
-			batchIndex: batchId,
-			resultSetNumber: resultId,
-			selection: selection,
-			gridIndex: index,
-			rowIndex: rowIndex
-		};
+	// 	let actionContext: IGridInfo = {
+	// 		batchIndex: batchId,
+	// 		resultSetNumber: resultId,
+	// 		selection: selection,
+	// 		gridIndex: index,
+	// 		rowIndex: rowIndex
+	// 	};
 
-		let anchor = { x: event.pageX + 1, y: event.pageY };
-		this.contextMenuService.showContextMenu({
-			getAnchor: () => anchor,
-			getActions: () => this.actionProvider.getGridActions(),
-			getKeyBinding: (action) => this._keybindingFor(action),
-			getActionsContext: () => (actionContext)
-		});
-	}
+	// 	let anchor = { x: event.pageX + 1, y: event.pageY };
+	// 	this.contextMenuService.showContextMenu({
+	// 		getAnchor: () => anchor,
+	// 		getActions: () => this.actionProvider.getGridActions(),
+	// 		getKeyBinding: (action) => this._keybindingFor(action),
+	// 		getActionsContext: () => (actionContext)
+	// 	});
+	// }
 
 	/**
 	 * Returns a function that selects all elements of a grid. This needs to
@@ -395,56 +394,56 @@ export abstract class GridParentComponent {
 	 *
 	 * @memberOf QueryComponent
 	 */
-	protected onGridSelectAll(): (gridIndex: number) => void {
-		let self = this;
-		return (gridIndex: number) => {
-			self.activeGrid = gridIndex;
-			self.slickgrids.toArray()[this.activeGrid].selection = true;
-		};
-	}
+	// protected onGridSelectAll(): (gridIndex: number) => void {
+	// 	let self = this;
+	// 	return (gridIndex: number) => {
+	// 		self.activeGrid = gridIndex;
+	// 		self.slickgrids.toArray()[this.activeGrid].selection = true;
+	// 	};
+	// }
 
-	private onSelectAllForActiveGrid(): void {
-		if (this.activeGrid >= 0 && this.slickgrids.length > this.activeGrid) {
-			this.slickgrids.toArray()[this.activeGrid].selection = true;
-		}
-	}
+	// private onSelectAllForActiveGrid(): void {
+	// 	if (this.activeGrid >= 0 && this.slickgrids.length > this.activeGrid) {
+	// 		this.slickgrids.toArray()[this.activeGrid].selection = true;
+	// 	}
+	// }
 
 	/**
 	 * Used to convert the string to a enum compatible with SlickGrid
 	 */
-	protected stringToFieldType(input: string): FieldType {
-		let fieldtype: FieldType;
-		switch (input) {
-			case 'string':
-				fieldtype = FieldType.String;
-				break;
-			default:
-				fieldtype = FieldType.String;
-				break;
-		}
-		return fieldtype;
-	}
+	// protected stringToFieldType(input: string): FieldType {
+	// 	let fieldtype: FieldType;
+	// 	switch (input) {
+	// 		case 'string':
+	// 			fieldtype = FieldType.String;
+	// 			break;
+	// 		default:
+	// 			fieldtype = FieldType.String;
+	// 			break;
+	// 	}
+	// 	return fieldtype;
+	// }
 
 	/**
 	 * Makes a resultset take up the full result height if this is not already true
 	 * Otherwise rerenders the result sets from default
 	 */
-	magnify(index: number): void {
-		const self = this;
-		if (this.renderedDataSets.length > 1) {
-			this.renderedDataSets = [this.placeHolderDataSets[index]];
-		} else {
-			this.renderedDataSets = this.placeHolderDataSets;
-			this.onScroll(0);
-		}
-		setTimeout(() => {
-			self.resizeGrids();
-			self.slickgrids.toArray()[0].setActive();
-			self._cd.detectChanges();
-		});
-	}
+	// magnify(index: number): void {
+	// 	const self = this;
+	// 	if (this.renderedDataSets.length > 1) {
+	// 		this.renderedDataSets = [this.placeHolderDataSets[index]];
+	// 	} else {
+	// 		this.renderedDataSets = this.placeHolderDataSets;
+	// 		this.onScroll(0);
+	// 	}
+	// 	setTimeout(() => {
+	// 		self.resizeGrids();
+	// 		self.slickgrids.toArray()[0].setActive();
+	// 		self._cd.detectChanges();
+	// 	});
+	// }
 
-	abstract onScroll(scrollTop): void;
+	// abstract onScroll(scrollTop): void;
 
 	protected getResultsElement(): any {
 		return this._el.nativeElement.querySelector('#results');
@@ -567,14 +566,14 @@ export abstract class GridParentComponent {
 	 */
 	protected abstract tryHandleKeyEvent(e): boolean;
 
-	resizeGrids(): void {
-		const self = this;
-		setTimeout(() => {
-			for (let grid of self.renderedDataSets) {
-				grid.resized.emit();
-			}
-		});
-	}
+	// resizeGrids(): void {
+	// 	const self = this;
+	// 	setTimeout(() => {
+	// 		for (let grid of self.renderedDataSets) {
+	// 			grid.resized.emit();
+	// 		}
+	// 	});
+	// }
 
 	// Private Helper Functions ////////////////////////////////////////////////////////////////////////////
 }

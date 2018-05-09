@@ -4,7 +4,7 @@
  *  Licensed under the Source EULA. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IColumnDefinition, IObservableCollection, IGridDataRow } from 'angular2-slickgrid';
+import { ColDef, GridOptions, IDatasource } from 'ag-grid';
 
 export interface ISlickRange {
 	fromCell: number;
@@ -41,14 +41,8 @@ export interface IGridIcon {
 }
 
 export interface IGridDataSet {
-	dataRows: IObservableCollection<IGridDataRow>;
-	columnDefinitions: IColumnDefinition[];
-	resized: any; // EventEmitter<any>;
-	totalRows: number;
-	batchId: number;
-	resultId: number;
-	maxHeight: number | string;
-	minHeight: number | string;
+	gridOptions: GridOptions;
+	columnDefinitions: ColDef[];
 }
 
 export enum SaveFormat {
