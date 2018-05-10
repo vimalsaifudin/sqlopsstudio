@@ -5,34 +5,27 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import * as data from 'sqlops';
+import * as sqlops from 'sqlops';
 import { ApiWrapper } from './apiWrapper';
+import { AlertController } from './configuration/alerts/alertController';
 
 /**
  * The main controller class that initializes the extension
  */
 export class MainController  {
-    protected _apiWrapper: ApiWrapper;
-    protected _context: vscode.ExtensionContext;
+    // UI Controllers
+    private _alertController: AlertController;
 
-    // PUBLIC METHODS //////////////////////////////////////////////////////
-    public constructor(context: vscode.ExtensionContext, apiWrapper?: ApiWrapper) {
-        this._apiWrapper = apiWrapper || new ApiWrapper();
-        this._context = context;
-
-        console.log('Got: ' + apiWrapper);
-    }
-
-    /**
-     * Deactivates the extension
-     */
-    public deactivate(): void {
+    public constructor(
+        private _context: vscode.ExtensionContext,
+        private _apiWrapper: ApiWrapper) {
+        this._alertController = new AlertController(this._context, this._apiWrapper);
     }
 
     public activate(): void {
+        this._alertController.activate();
+    }
 
-        this._apiWrapper.registerWebviewProvider('data-management-agent', webview => {
-            webview.html = '<div><h1>SQL Agent</h1></div>';
-        });
+    public deactivate(): void {
     }
 }

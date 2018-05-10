@@ -5,7 +5,7 @@
 
 'use strict';
 import * as vscode from 'vscode';
-import * as data from 'sqlops';
+import * as sqlops from 'sqlops';
 
 /**
  * Wrapper class to act as a facade over VSCode and Data APIs and allow us to test / mock callbacks into
@@ -17,13 +17,13 @@ import * as data from 'sqlops';
 export class ApiWrapper {
     // Data APIs
 
-    public registerWebviewProvider(widgetId: string, handler: (webview: data.DashboardWebview) => void): void {
-        return data.dashboard.registerWebviewProvider(widgetId, handler);
+    public registerWebviewProvider(widgetId: string, handler: (webview: sqlops.DashboardWebview) => void): void {
+        return sqlops.dashboard.registerWebviewProvider(widgetId, handler);
     }
 
 
-    public registerControlHostProvider(widgetId: string, handler: (webview: data.DashboardWebview) => void): void {
-        return data.dashboard.registerWebviewProvider(widgetId, handler);
+    public registerControlHostProvider(widgetId: string, handler: (webview: sqlops.DashboardWebview) => void): void {
+        return sqlops.dashboard.registerWebviewProvider(widgetId, handler);
     }
 
     /**
