@@ -52,5 +52,7 @@ export function textFormatter(row: number, cell: any, value: any, columnDef: any
 		valueToDisplay = Strings.escape(value);
 	}
 
-	return `<span title="${valueToDisplay}" class="${cellClasses}">${valueToDisplay}</span>`;
+	return valueToDisplay;
+
+	// return `<span role="gridcell" title="${valueToDisplay}" class="${cellClasses}">${valueToDisplay}</span>`;
 }
