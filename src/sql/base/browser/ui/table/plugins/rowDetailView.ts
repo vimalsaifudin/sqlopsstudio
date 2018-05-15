@@ -279,7 +279,7 @@ export class RowDetailView {
 		item._parent = parent;
 		item._offset = offset;
 		item.jobId = parent.jobId;
-		item.name = parent.message ? parent.message : nls.localize('rowDetailView.loadError','Loading Error...');
+		item.name = parent.message ? parent.message : nls.localize('rowDetailView.loadError', 'Loading Error...');
 		return item;
 	}
 
