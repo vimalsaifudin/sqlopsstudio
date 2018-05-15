@@ -1,6 +1,7 @@
 // Adopted and converted to typescript from https://github.com/6pac/SlickGrid/blob/master/plugins/slick.rowdetailview.js
 // heavily modified
 import { mixin } from 'vs/base/common/objects';
+import * as DOM from 'vs/base/browser/dom';
 import * as nls from 'vs/nls';
 
 export class RowDetailView {
@@ -64,7 +65,7 @@ export class RowDetailView {
 
 	public handleClick(e: any, args: any): void {
 		// clicking on a row select checkbox
-		if (this._options.useRowClick || this._grid.getColumns()[args.cell].id === this._options.columnId && $(e.target).hasClass('detailView-toggle')) {
+		if (this._options.useRowClick || this._grid.getColumns()[args.cell].id === this._options.columnId && DOM.hasClass(e.target, 'detailView-toggle')) {
 			// if editing, try to commit
 			if (this._grid.getEditorLock().isActive() && !this._grid.getEditorLock().commitCurrentEdit()) {
 				e.preventDefault();
@@ -333,7 +334,7 @@ export class RowDetailView {
 		if (dataContext._isPadding === true) {
 			//render nothing
 		} else if (dataContext._collapsed) {
-			return '<div class=\'detailView-toggle expand\'></div>';
+			return '<div class="detailView-toggle expand"></div>';
 		} else {
 			let html = [];
 			let rowHeight = this._grid.getOptions().rowHeight;
@@ -348,13 +349,13 @@ export class RowDetailView {
 			//slick-cell to escape the cell overflow clipping.
 
 			//sneaky extra </div> inserted here-----------------v
-			html.push("<div class='detailView-toggle collapse'></div></div>");
+			html.push('<div class="detailView-toggle collapse"></div></div>');
 
-			html.push("<div id='cellDetailView_", dataContext.id, "' class='dynamic-cell-detail' ");   //apply custom css to detail
-			html.push("style='height:", dataContext._height, "px;"); //set total height of padding
-			html.push("top:", rowHeight, "px'>");             //shift detail below 1st row
-			html.push("<div id='detailViewContainer_", dataContext.id, "'  class='detail-container' style='max-height:" + (dataContext._height - rowHeight + bottomMargin) + "px'>"); //sub ctr for custom styling
-			html.push("<div id='innerDetailView_", dataContext.id, "'>", dataContext._detailContent, "</div></div>");
+			html.push(`<div id="cellDetailView_${dataContext.id}" class="dynamic-cell-detail" `);   //apply custom css to detail
+			html.push(`style="height:${dataContext._height}px;`); //set total height of padding
+			html.push(`top:${rowHeight}px">`);             //shift detail below 1st row
+			html.push(`<div id="detailViewContainer_${dataContext.id}" class="detail-container" style="max-height:${dataContext._height - rowHeight + bottomMargin}px">`); //sub ctr for custom styling
+			html.push(`<div id="innerDetailView_${dataContext.id}">`, dataContext._detailContent, '</div></div>');
 			//&omit a final closing detail container </div> that would come next
 
 			return html.join('');
@@ -363,17 +364,21 @@ export class RowDetailView {
 	}
 
 	public resizeDetailView(item) {
-		if (!item) return;
+		if (!item) {
+			return;
+		}
 
 		// Grad each of the dom items
 		let mainContainer = document.getElementById('detailViewContainer_' + item.id);
 		let cellItem = document.getElementById('cellDetailView_' + item.id);
 		let inner = document.getElementById('innerDetailView_' + item.id);
 
-		if (!mainContainer || !cellItem || !inner) return;
+		if (!mainContainer || !cellItem || !inner) {
+			return;
+		}
 
 		for (let idx = 1; idx <= item._sizePadding; idx++) {
-			this._dataView.deleteItem(item.id + "." + idx);
+			this._dataView.deleteItem(item.id + '.' + idx);
 		}
 
 		let rowHeight = this._grid.getOptions().rowHeight; // height of a row
@@ -394,9 +399,9 @@ export class RowDetailView {
 			this._grid.getOptions().minRowBuffer = item._sizePadding + 3;
 		}
 
-		mainContainer.setAttribute("style", "max-height: " + item._height + "px");
+		mainContainer.setAttribute('style', `max-height: ${item._height}px`);
 		if (cellItem) {
-			cellItem.setAttribute("style", "height: " + item._height + "px;top:" + rowHeight + "px");
+			cellItem.setAttribute('style', `height: ${item._height}px;top:${rowHeight}px`);
 		}
 
 		let idxParent = this._dataView.getIdxById(item.id);

@@ -2,6 +2,7 @@
 // heavily modified
 
 import { clone } from 'sql/base/common/objects';
+import { KeyCode } from 'vs/base/common/keyCodes';
 
 export class DragCellSelectionModel<T> implements Slick.SelectionModel<T, Array<Slick.Range>> {
 	private readonly keyColResizeIncr = 5;
@@ -70,12 +71,12 @@ export class DragCellSelectionModel<T> implements Slick.SelectionModel<T, Array<
 	private isNavigationKey(e: BaseJQueryEventObject) {
 		// Nave keys (home, end, arrows) are all in sequential order so use a
 		switch (e.which) {
-			case $.ui.keyCode.HOME:
-			case $.ui.keyCode.END:
-			case $.ui.keyCode.LEFT:
-			case $.ui.keyCode.UP:
-			case $.ui.keyCode.RIGHT:
-			case $.ui.keyCode.DOWN:
+			case KeyCode.Home:
+			case KeyCode.End:
+			case KeyCode.LeftArrow:
+			case KeyCode.UpArrow:
+			case KeyCode.RightArrow:
+			case KeyCode.DownArrow:
 				return true;
 			default:
 				return false;
@@ -84,7 +85,7 @@ export class DragCellSelectionModel<T> implements Slick.SelectionModel<T, Array<
 
 	private navigateLeft(e: JQueryInputEventObject, activeCell: Slick.Cell) {
 		if (activeCell.cell > 1) {
-			let isHome = e.which === $.ui.keyCode.HOME;
+			let isHome = e.which === KeyCode.Home;
 			let newActiveCellColumn = isHome ? 1 : activeCell.cell - 1;
 			// Unsure why but for range, must record 1 index less than expected
 			let newRangeColumn = newActiveCellColumn - 1;
@@ -113,7 +114,7 @@ export class DragCellSelectionModel<T> implements Slick.SelectionModel<T, Array<
 	private navigateRight(e: JQueryInputEventObject, activeCell: Slick.Cell) {
 		let columnLength = this._grid.getColumns().length;
 		if (activeCell.cell < columnLength) {
-			let isEnd = e.which === $.ui.keyCode.END;
+			let isEnd = e.which === KeyCode.End;
 			let newActiveCellColumn = isEnd ? columnLength : activeCell.cell + 1;
 			// Unsure why but for range, must record 1 index less than expected
 			let newRangeColumn = newActiveCellColumn - 1;
@@ -159,15 +160,15 @@ export class DragCellSelectionModel<T> implements Slick.SelectionModel<T, Array<
 					return;
 				}
 				// end key
-				if (e.which === $.ui.keyCode.END) {
+				if (e.which === KeyCode.End) {
 					this.navigateRight(e, activeCell);
 				}
 				// home key
-				if (e.which === $.ui.keyCode.HOME) {
+				if (e.which === KeyCode.Home) {
 					this.navigateLeft(e, activeCell);
 				}
 				// left arrow
-				if (e.which === $.ui.keyCode.LEFT) {
+				if (e.which === KeyCode.LeftArrow) {
 					// column resize
 					if ((e.ctrlKey || e.metaKey) && e.shiftKey) {
 						let allColumns = clone(this._grid.getColumns());
@@ -177,7 +178,7 @@ export class DragCellSelectionModel<T> implements Slick.SelectionModel<T, Array<
 						this.navigateLeft(e, activeCell);
 					}
 					// up arrow
-				} else if (e.which === $.ui.keyCode.UP && activeCell.row > 0) {
+				} else if (e.which === KeyCode.UpArrow && activeCell.row > 0) {
 					if (e.shiftKey) {
 						let last = this._ranges.pop();
 
@@ -197,7 +198,7 @@ export class DragCellSelectionModel<T> implements Slick.SelectionModel<T, Array<
 					this._grid.setActiveCell(activeCell.row - 1, activeCell.cell);
 					this.setSelectedRanges(this._ranges);
 					// right arrow
-				} else if (e.which === $.ui.keyCode.RIGHT) {
+				} else if (e.which === KeyCode.RightArrow) {
 					// column resize
 					if ((e.ctrlKey || e.metaKey) && e.shiftKey) {
 						let allColumns = clone(this._grid.getColumns());
@@ -207,7 +208,7 @@ export class DragCellSelectionModel<T> implements Slick.SelectionModel<T, Array<
 						this.navigateRight(e, activeCell);
 					}
 					// down arrow
-				} else if (e.which === $.ui.keyCode.DOWN && activeCell.row < this._grid.getDataLength() - 1) {
+				} else if (e.which === KeyCode.DownArrow && activeCell.row < this._grid.getDataLength() - 1) {
 					if (e.shiftKey) {
 						let last = this._ranges.pop();
 
