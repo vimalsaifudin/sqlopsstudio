@@ -6,7 +6,7 @@
 
 import * as vscode from 'vscode';
 import * as sqlops from 'sqlops';
-import { ApiWrapper } from '../../apiWrapper';
+import { ApiWrapper } from '../apiWrapper';
 
 /**
  * The main controller class that initializes the extension
@@ -49,9 +49,9 @@ export class AlertController  {
 
 		vscode.commands.registerCommand('agent.configAlert', () => {
 			let dialog = sqlops.window.modelviewdialog.createDialog('Test dialog');
-			let tab1 = sqlops.window.modelviewdialog.createTab('Tab 1');
+			let tab1 = sqlops.window.modelviewdialog.createTab('General');
 			tab1.content = 'dialogContent1';
-			let tab2 = sqlops.window.modelviewdialog.createTab('Tab 2');
+			let tab2 = sqlops.window.modelviewdialog.createTab('Response');
 			tab2.content = 'dialogContent2';
 			dialog.content = [tab1, tab2];
 			dialog.onValidityChanged(valid => {

@@ -7,7 +7,7 @@
 import * as vscode from 'vscode';
 import * as sqlops from 'sqlops';
 import { ApiWrapper } from './apiWrapper';
-import { AlertController } from './configuration/alerts/alertController';
+import { AlertController } from './configuration/alertController';
 
 /**
  * The main controller class that initializes the extension
