@@ -48,16 +48,20 @@ export class AlertController  {
 		});
 
 		vscode.commands.registerCommand('agent.configAlert', () => {
-			let dialog = sqlops.window.modelviewdialog.createDialog('Test dialog');
-			let tab1 = sqlops.window.modelviewdialog.createTab('General');
-			tab1.content = 'dialogContent1';
-			let tab2 = sqlops.window.modelviewdialog.createTab('Response');
-			tab2.content = 'dialogContent2';
-			dialog.content = [tab1, tab2];
-			dialog.onValidityChanged(valid => {
-				console.log('dialog is ' + dialog.valid + ', validity is ' + valid);
-				dialog.okButton.enabled = valid;
-			});
+			let dialog = sqlops.window.modelviewdialog.createDialog('Create Alert');
+			let generalTab = sqlops.window.modelviewdialog.createTab('General');
+			generalTab.content = 'dialogContent1';
+			let responseTab = sqlops.window.modelviewdialog.createTab('Response');
+			responseTab.content = 'dialogContent2';
+			dialog.content = [generalTab, responseTab];
+
+
+			// dialog.onValidityChanged(valid => {
+			// 	console.log('dialog is ' + dialog.valid + ', validity is ' + valid);
+			// 	dialog.okButton.enabled = valid;
+			// });
+
+
 			sqlops.window.modelviewdialog.openDialog(dialog);
 		});
 
